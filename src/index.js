@@ -10,7 +10,7 @@ import { ConnectedRouter, routerMiddleware } from 'react-router-redux'
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 
 import { ConnectedLogin }    from "./containers/login";
-import { Messages } from "./containers/messages";
+import { ConnectedMessages } from "./containers/messages";
 
 import cyan from 'material-ui/colors/cyan';
 import pink from 'material-ui/colors/pink';
@@ -44,9 +44,7 @@ render (
             <ConnectedRouter history={ history }>
                 <div>
                     <Route exact path="/" component={ ConnectedLogin }    />
-                    {/*
-                        <Route exact path="/messages" component={ Messages } />
-                    */}
+                    <Route exact path="/messages" component={ ConnectedMessages } />
                 </div>
             </ConnectedRouter>
         </MuiThemeProvider>

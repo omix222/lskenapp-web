@@ -2,104 +2,259 @@
     Container Components
     Presentational component に具体的なデータやコールバック関数を与えるコンポーネント
 */
-import React, { Component } from "react";
-import styled from 'styled-components';
-
-import { connect } from 'react-redux'
+import React, { Component }   from "react";
+import { connect }            from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { routerActions } from 'react-router-redux'
+import { routerActions }      from 'react-router-redux'
+import PropTypes              from 'prop-types';
+import classNames             from 'classnames';
+import { withStyles }         from 'material-ui/styles';
 
-const Input = styled.textarea`
-    font-size: 1.25rem;
-    line-height: 1.5;
-    border-radius: .3rem;
-    display: block;
-    width: 100%;
-    color: #495057;
-    background-color: #fff;
-    background-image: none;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    border-radius: .25rem;
-    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-`;
-const OtherTalk = styled.p`
-    &:before { content: "${ props => props.name}"; }
-    &:after  { background-image: url(./img/def_user.png); }
-`;
+import Drawer from 'material-ui/Drawer';
+import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
+import Button from 'material-ui/Button';
+import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
+import { MenuItem } from 'material-ui/Menu';
+import TextField from 'material-ui/TextField';
+import Typography from 'material-ui/Typography';
+import Divider from 'material-ui/Divider';
+import ChatIcon from 'material-ui-icons/Chat';
 
-class MessagesComponent extends Component {
+const drawerWidth = 200;
+const styles = theme => ({
+    root: {
+        width: '100%',
+        height: '100vh',
+        zIndex: 1,
+        overflow: 'hidden',
+    },
+    appFrame: {
+        position: 'relative',
+        display: 'flex',
+        width: '100%',
+        height: '100%',
+    },
+    flex: {
+        flex: 1,
+    },
+    appBar: {
+        position: 'absolute',
+        width: `calc(100% - ${drawerWidth}px)`,
+    },
+    'appBar-left': {
+        marginLeft: drawerWidth,
+    },
+    'appBar-right': {
+        marginRight: drawerWidth,
+    },
+    drawerPaper: {
+        position: 'relative',
+        height: '100%',
+        width: drawerWidth,
+    },
+    drawerHeader: theme.mixins.toolbar,
+    content: {
+        backgroundColor: theme.palette.background.white,
+        width: '100%',
+        padding: theme.spacing.unit * 3,
+        height: 'calc(100% - 56px)',
+        marginTop: 56,
+        [theme.breakpoints.up('sm')]: {
+            height: 'calc(100% - 64px)',
+            marginTop: 64,
+        },
+    },
+    other:{
+        '&:before': {
+            content: '"たわし"'
+        },
+        '&:after': {
+            backgroundImage: "url(http://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20160910/20160910223959.png)"
+        }
+    },
+    talkContainer: {
+        display: 'flex',
+        margin: 20,
+    },
+    myContainer: {
+        display: 'flex',
+        flexDirection: 'row-reverse',
+        margin: 20,
+    },
+    talkContent: {
+        display: 'flex',
+        flexDirection: 'column'
+    },
+    myContent: {
+        display: 'flex',
+        flexDirection: 'column'
+    },
+    talkIcon: {
+        width:45,
+        height:45,
+        borderRadius:40
+    },
+    talkUser: {
+        color: theme.palette.grey[500],
+        fontSize: '.8em',
+    },
+    myTalk: {
+        display: 'inline-block',
+        fontSize: '.8em',
+        maxWidth: 280,
+        padding: '5px 10px',
+        borderRadius: 10,
+        // fontSize: '1.3rem',
+        // minHeight: 30,
+        wordWrap: 'break-word',
+        position: 'relative',
+        marginRight: 10,
+        backgroundColor: '#C2F5A8',
+        '&:before': {
+            zIndex: -1,
+            height:0,
+            content: '""',
+            display: 'block',
+            position: 'absolute',
+            top: 2,
+            border: '8px solid transparent',
+            right: -16,
+            transform: 'rotate(-20deg)',
+            borderLeft: '25px solid #C2F5A8',
+        }
+    },
+    otherTalk: {
+        display: 'inline-block',
+        fontSize: '.8em',
+        maxWidth: 280,
+        padding: '5px 10px',
+        borderRadius: 10,
+        // fontSize: '1.3rem',
+        // minHeight: 30,
+        wordWrap: 'break-word',
+        position: 'relative',
+        marginLeft: 10,
+        backgroundColor: '#ECEEF3',
+        '&:before': {
+            zIndex: -1,
+            height:0,
+            content: '""',
+            display: 'block',
+            position: 'absolute',
+            top: 2,
+            border: '8px solid transparent',
+            left: -16,
+            transform: 'rotate(20deg)',
+            borderRight: '25px solid #ECEEF3',
+        }
+    }
+});
+const otherTalkStyles = props => ({
+    other: {
+        '&:after': {
+            backgroundImage: "url(http://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20160910/20160910223959.png)"
+        }
+    },
+});
+
+class OtherTalkComponent extends Component {
+    render() {
+        const { classes } = this.props;
+        return (
+            <div className={classes.talkContainer}>
+                <img className={classes.talkIcon} src="./img/def_user.png" />
+                <div className={classes.talkContent}>
+                    <div className={classes.talkUser}>あああ</div>
+                    <div className={classes.otherTalk}>あいうえおかきくけこさしすせそあああ</div>
+                </div>
+            </div>
+        );
+    }
+}
+const OtherTalk = withStyles(styles)(OtherTalkComponent);
+//Stamp.defaultProps = { me: false};
+
+class TalkComponent extends Component {
+    render() {
+        const { classes } = this.props;
+        return (
+            <div className={classes.myContainer}>
+                <div className={classes.talkContent}>
+                    <div className={classes.myTalk}>あいうえおかきくけこさしすせそあああ</div>
+                </div>
+            </div>
+        );
+    }
+}
+const MyTalk = withStyles(styles)(TalkComponent);
+
+class StampComponent extends Component {
+    render() {
+        const { me, classes } = this.props;
+        return (
+            <div className={classes.otherContainer}>
+                <img src="https://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20170423/20170423030055.png" />
+            </div>
+        );
+    }
+}
+const Stamp = withStyles(styles)(StampComponent);
+Stamp.defaultProps = { me: false};
+
+
+
+class Messages extends Component {
     componentDidMount() {
-        //window.componentHandler.upgradeDom();
-        // window.componentHandler.upgradeAllRegistered();
     }
     render() {
+        const { classes } = this.props;
+        const anchor = "left"
+        const drawer = (
+            <Drawer
+                type="permanent"
+                classes={{
+                    paper: classes.drawerPaper,
+                }}
+                anchor={anchor}>
+                <div className={classes.drawerHeader} />
+                <Divider />
+                <List>
+                    <ListItem button>
+                        <ListItemIcon>
+                            <ChatIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="aaa" />
+                    </ListItem>
+                </List>
+                <Divider />
+                <List>
+                    <ListItem button component="a" href="/">
+                        <ListItemText primary="ログアウト" />
+                    </ListItem>
+                </List>
+            </Drawer>
+        );
         return (
-            <div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-                <header className="mdl-layout__header">
-                    <div className="mdl-layout__header-row">
-                        <span className="mdl-layout-title">メッセージ一覧</span>
-                        <div className="mdl-layout-spacer"></div>
-                        <nav className="mdl-navigation mdl-layout--large-screen-only">
-                        {/*
-                            <a className="mdl-navigation__link" href="">Link1</a>
-                        */}
-                        </nav>
-                    </div>
-                </header>
-
-
-                <main className="mdl-layout__content" style={{ background: '#ffffff' }}>
-                    <div className="mdl-grid">
-                        <div className="mdl-cell mdl-cell--2-col"></div>
-                        <div className="mdl-cell mdl-cell--8-col entry-content">
-                            <div style={{ padding: '0px 10px' }}>
-                                <OtherTalk className="other-line" name={'たろう'}>
-                                    <span className="other-toge">ああああああいいいいいううううう</span>
-                                </OtherTalk>
-                                <p className="my-line">
-                                    <span className="my-toge">いいいい</span>
-                                </p>
-                                <OtherTalk className="other-line" name="じろう">
-                                    <span className="other-toge">じろうの発言です。<br/>改行改行</span>
-                                </OtherTalk>
-                                <OtherTalk className="other-line stamp" name={'たろう'}>
-                                    <span>
-                                        <img src="https://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20170423/20170423030055.png" alt="f:id:tawashix:20170423030055p:plain"
-                                            title="f:id:tawashix:20170423030055p:plain" className="hatena-fotolife"  />
-                                    </span>
-                                </OtherTalk>
-
-                                <p className="my-line stamp">
-                                    <span>
-                                        <img src="https://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20170423/20170423030055.png" alt="f:id:tawashix:20170423030055p:plain"
-                                            title="f:id:tawashix:20170423030055p:plain" className="hatena-fotolife"  />
-                                    </span>
-                                </p>
-
-                                <p className="my-line">
-                                    <span className="my-toge">うううううううううううううう</span>
-                                </p>
-                            </div>
+            <div className={classes.root}>
+                <div className={classes.appFrame}>
+                    <AppBar className={classNames(classes.appBar, classes[`appBar-${anchor}`])}>
+                        <Toolbar>
+                            <Typography type="title" color="inherit" className={classes.flex}>
+                            メッセージ一覧
+                            </Typography>
+                            <Button color="contrast" component="a" href="/" >ログアウト</Button>
+                        </Toolbar>
+                    </AppBar>
+                    {drawer}
+                    <main className={classes.content}>
+                        <div>
+                            <OtherTalk name="はしもと" text="おはよう" />
+                            <MyTalk name="はしもと" text="おはよう" />
+                            <Stamp name="はしもと" text="おはよう" />
                         </div>
-                        <div className="mdl-cell mdl-cell--2-col"></div>
-                    </div>
-                </main>
-                <footer className="mdl-mini-footer" style={{ background: '#ECEEF3', padding: 0, height: '180px' }}>
-                    <div className="mdl-grid" style={{ width: '100%' }}>
-                        <div className="mdl-cell mdl-cell--12-col">
-                            <Input placeholder="メッセージを入力してください。" />
-                        </div>
-                        <div className="mdl-cell mdl-cell--12-col">
-                            <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
-                                Send
-                            </button>
-                            <button className="mdl-button mdl-js-button mdl-button--icon" style={{ marginLeft: 10 }}>
-                                <i className="material-icons">mood</i>
-                            </button>
-                        </div>
-                    </div>
-                </footer>
+                    </main>
+                </div>
             </div>
         );
     }
@@ -110,26 +265,15 @@ class MessagesComponent extends Component {
 
 
 
-// ReduxのStoreを第一引き数に取る関数で、ComponentにPropsとして渡すものをフィルタリングしたい時に使う
-const mapStateToProps = state => {
-    console.info("Messages#mapStateToProps");
-    return state.auth;
-}
-
-const mapDispatchToProps = dispatch => {
-    console.info("Messages#mapDispatchToProps");
-    return {
+export const ConnectedMessages = connect(
+    // mapStateToProps
+    state => state.auth,
+    // mapDispatchToProps
+    dispatch => ({
         routerActions: bindActionCreators(Object.assign({}, routerActions), dispatch),
         onClick: () => {
-            //console.info('onClick:login');
-            //dispatch(routerActions.push("/app"));
-            //dispatch(login('hoge'));
+            //dispatch(execLogin(userId));
         },
-    };
-}
-// NewComponent = connect(Componentからdispatchされたアクション) (Component)
-export const Messages = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(MessagesComponent);
+    })
+)(withStyles(styles)(Messages));
 
