@@ -1,0 +1,32 @@
+Reference:
+	Material Design Lite
+	https://getmdl.io/index.html
+	styled components
+	https://www.styled-components.com/
+	SPAにおけるCSSについて、ひとつの解
+	http://yoshiko.hatenablog.jp/entry/css-in-js
+	これからのReactコンポーネントのスタイリングはstyled-componentsが良さそう
+	https://qiita.com/kiida/items/ceac662d9a8bdd960499
+	styled-componentsについて
+	https://qiita.com/makotot/items/8f685fa5ba26d9f4222d
+	マテリアルデザインカラー
+	色の組み合わせ見本集
+	https://saruwakakun.com/html-css/material/colors
+	★reduxを試してみた(5日目) - ajaxを使ってUIを構築する(reduxにおける非同期の制御)
+	https://qiita.com/kompiro/items/d1ffcfcba7cc34d364f0
+	bindActionDispatchers の例
+	https://stackoverflow.com/questions/35196873/how-to-use-react-router-redux-routeactions
+	React+Reduxの最もシンプルな構成
+	http://numb86-tech.hatenablog.com/entry/2016/11/20/124316
+	mapStateToProps, mapDispatchToProps の説明が書かれているサイト
+	http://anect.hatenablog.com/entry/2017/06/09/151000
+
+Redux
+	Reducer
+	以前のState と Action を組み合わせて新しい Stateを作る
+	
+	mapStateToProps
+	ReduxのStoreを第一引き数に取る関数で、ComponentにPropsとして渡すものをフィルタリングしたい時に使う。
+	
+	mapDispatchToProps
+	ReduxのDispatchを第一引き数に取る関数で、変更を伝えるアクションを作成する時に使う。
