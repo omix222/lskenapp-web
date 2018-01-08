@@ -124,6 +124,18 @@ const styles = theme => ({
             borderLeft: '25px solid #C2F5A8',
         }
     },
+    timestamp: {
+        alignSelf: 'flex-end',
+        color: theme.palette.grey[500],
+        fontSize: '.4em',
+        padding: '0px 0px 4px 8px',
+    },
+    myTimestamp: {
+        alignSelf: 'flex-end',
+        color: theme.palette.grey[500],
+        fontSize: '.4em',
+        padding: '0px 8px 4px 0px',
+    },
     otherTalk: {
         display: 'inline-block',
         fontSize: '.8em',
@@ -158,45 +170,68 @@ const otherTalkStyles = props => ({
     },
 });
 
-class OtherTalkComponent extends Component {
-    render() {
-        const { classes } = this.props;
-        return (
-            <div className={classes.talkContainer}>
-                <img className={classes.talkIcon} src="./img/def_user.png" />
-                <div className={classes.talkContent}>
-                    <div className={classes.talkUser}>あああ</div>
-                    <div className={classes.otherTalk}>あいうえおかきくけこさしすせそあああ</div>
-                </div>
-            </div>
-        );
-    }
-}
-const OtherTalk = withStyles(styles)(OtherTalkComponent);
-//Stamp.defaultProps = { me: false};
-
 class TalkComponent extends Component {
     render() {
-        const { classes } = this.props;
-        return (
-            <div className={classes.myContainer}>
-                <div className={classes.talkContent}>
-                    <div className={classes.myTalk}>あいうえおかきくけこさしすせそあああ</div>
+        const { me, classes } = this.props;
+        if (me) {
+            return (
+                <div className={classes.myContainer}>
+                    <div className={classes.myContent}>
+                        <div className={classes.myTalk}>
+                        あいうえおかきくけこさしすせそあああ
+                        </div>
+                    </div>
+                    <span className={classes.myTimestamp}>09:30</span>
                 </div>
-            </div>
-        );
+            );
+        } else {
+            return (
+                <div className={classes.talkContainer}>
+                    <img className={classes.talkIcon} src="./img/def_user.png" />
+                    <div className={classes.talkContent}>
+                        <div className={classes.talkUser}>
+                        あああ
+                        </div>
+                        <div className={classes.otherTalk}>
+                        あいうえおかきくけこさしすせそあああ
+                        </div>
+                    </div>
+                    <span className={classes.timestamp}>09:00</span>
+                </div>
+            );
+        }
     }
 }
-const MyTalk = withStyles(styles)(TalkComponent);
+const Talk = withStyles(styles)(TalkComponent);
+Talk.defaultProps = { me: false};
 
 class StampComponent extends Component {
+
     render() {
         const { me, classes } = this.props;
-        return (
-            <div className={classes.otherContainer}>
-                <img src="https://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20170423/20170423030055.png" />
-            </div>
-        );
+        if (me) {
+            return (
+                <div className={classes.myContainer}>
+                    <div className={classes.myContent}>
+                        <img src="https://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20170423/20170423030055.png" />
+                    </div>
+                    <span className={classes.myTimestamp}>09:00</span>
+                </div>
+            );
+        } else {
+            return (
+                <div className={classes.talkContainer}>
+                    <img className={classes.talkIcon} src="./img/def_user.png" />
+                    <div className={classes.talkContent}>
+                        <div className={classes.talkUser}>
+                        あああ
+                        </div>
+                        <img src="https://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20170423/20170423030055.png" />
+                    </div>
+                    <span className={classes.timestamp}>09:00</span>
+                </div>
+            );
+        }
     }
 }
 const Stamp = withStyles(styles)(StampComponent);
@@ -249,9 +284,10 @@ class Messages extends Component {
                     {drawer}
                     <main className={classes.content}>
                         <div>
-                            <OtherTalk name="はしもと" text="おはよう" />
-                            <MyTalk name="はしもと" text="おはよう" />
-                            <Stamp name="はしもと" text="おはよう" />
+                            <Talk name="はしもと" text="おはよう" />
+                            <Talk me={true} name="はしもと" text="おはよう" />
+                            <Stamp name="はしもと" />
+                            <Stamp me={true} />
                         </div>
                     </main>
                 </div>
