@@ -56,7 +56,7 @@ const styles = theme => ({
 
 class LoginComponent extends Component {
     state = {
-        loginId: ''
+        loginId: '',
     };
 
     componentDidMount() {
@@ -83,6 +83,8 @@ class LoginComponent extends Component {
                     <CardHeader subheader="Web版Client" title="ログイン" />
                     <CardContent>
                         <TextField
+                            error={this.props.errorMessage.length > 0}
+                            helperText={this.props.errorMessage}
                             label="ユーザID"
                             className={classes.textField}
                             onChange={this.handleChange('loginId')}
@@ -91,9 +93,14 @@ class LoginComponent extends Component {
                         />
                     </CardContent>
                     <CardActions className={classes.cardActions}>
-                        <Button raised className={classes.button} color="primary" onClick={() => {
-                            this.props.onClick(this.state.loginId);
-                        }}>ログイン</Button>
+                        <Button
+                            raised
+                            className={classes.button}
+                            color="primary"
+                            onClick={() => {
+                                this.props.onClick(this.state.loginId);
+                            }}
+                            >ログイン</Button>
                     </CardActions>
                 </Card>
                 </div>
@@ -109,8 +116,8 @@ export const ConnectedLogin = connect(
     dispatch => ({
         routerActions: bindActionCreators(Object.assign({}, routerActions), dispatch),
         onClick: (userId) => {
-            dispatch(routerActions.push("/messages"));
-            //dispatch(execLogin(userId));
+            //dispatch(routerActions.push("/messages"));
+            dispatch(execLogin(userId));
         },
     })
 )(withStyles(styles)(LoginComponent));

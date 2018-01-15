@@ -23,7 +23,8 @@ const loginSuccess = (loginId, json) => ({
 /* Reducers */
 const initialState = {
     isFetching: false,
-    didInvalidate:false
+    didInvalidate:false,
+    errorMessage: '',
 };
 export const loginReducer = (state = initialState, action) => {
     console.info("reducer:auth");
@@ -65,7 +66,6 @@ export function execLogin(userId) {
 
         // この例では、実行を待たせるためpromiseを返している。
         // Thunkミドルウェアは必須ではないが、便利なので使っている。
-        console.info("fetch call");
         return fetch(`http://localhost:8080/lskenapp/api/v1.0/users/${userId}`, {
             mode: 'cros'
         })
