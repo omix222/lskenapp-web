@@ -19,7 +19,13 @@ import { MenuItem } from 'material-ui/Menu';
 import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
+import IconButton from 'material-ui/IconButton';
 import ChatIcon from 'material-ui-icons/Chat';
+import SendIcon from 'material-ui-icons/Send';
+import InsertEmoticonIcon from 'material-ui-icons/InsertEmoticon';
+
+
+
 
 const drawerWidth = 200;
 const styles = theme => ({
@@ -58,7 +64,8 @@ const styles = theme => ({
         backgroundColor: theme.palette.background.white,
         width: '100%',
         padding: theme.spacing.unit * 3,
-        height: 'calc(100% - 56px)',
+        minHeight: 'calc(100% - 56px)',
+        overflowY: 'auto',
         marginTop: 56,
         [theme.breakpoints.up('sm')]: {
             height: 'calc(100% - 64px)',
@@ -160,7 +167,34 @@ const styles = theme => ({
             transform: 'rotate(20deg)',
             borderRight: '25px solid #ECEEF3',
         }
-    }
+    },
+    inputPanel: {
+        position: 'fixed',
+        bottom: 0,
+        height: 64+1,
+        width: '100%',
+        zIndex: 2000,
+        backgroundColor: theme.palette.common.white,
+    },
+    inputPanelInner: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+    input: {
+        border: 0,
+        resize: 'none',
+        height: 59,
+        fontSize: '1em',
+        marginLeft: drawerWidth,
+        width: `calc(100% - ${drawerWidth + 120}px)`,
+        /*
+        position: 'absolute',
+        left: drawerWidth,
+        */
+    },
+    button: {
+        //margin: theme.spacing.unit * 0.2,
+    },
 });
 const otherTalkStyles = props => ({
     other: {
@@ -287,9 +321,24 @@ class Messages extends Component {
                             <Talk name="はしもと" text="おはよう" />
                             <Talk me={true} name="はしもと" text="おはよう" />
                             <Stamp name="はしもと" />
+                            <Talk name="はしもと" text="おはよう" />
+                            <Stamp me={true} />
                             <Stamp me={true} />
                         </div>
                     </main>
+                </div>
+                <div className={classes.inputPanel}>
+                    <Divider />
+                    <div className={classes.inputPanelInner}>
+                        <textarea className={classes.input} placeholder="メッセージを入力してください。" row="2">
+                        </textarea>
+                        <IconButton className={classes.button} aria-label="スタンプ">
+                            <InsertEmoticonIcon />
+                        </IconButton>
+                        <IconButton className={classes.button} aria-label="送信">
+                            <SendIcon />
+                        </IconButton>
+                    </div>
                 </div>
             </div>
         );
