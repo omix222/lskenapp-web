@@ -42,7 +42,7 @@ loginActions.login = (userId) => (dispatch) => {
     })
     .catch(error => {
         // ネットワーク呼び出し中に起きたエラーのキャッチもできる。
-        dispatch(loginActions.loginFailure('通信中にエラーが発生しました。'));
+        dispatch(loginActions.loginFailure('ユーザIDに誤りがあります。'));
     })
 };
 
