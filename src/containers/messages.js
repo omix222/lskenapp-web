@@ -15,8 +15,6 @@ import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
 import Button from 'material-ui/Button';
 import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
-import { MenuItem } from 'material-ui/Menu';
-import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
 import Divider from 'material-ui/Divider';
 import IconButton from 'material-ui/IconButton';
@@ -167,6 +165,15 @@ class Messages extends Component {
                                             postDate={message.postDate}
                                             text={message.messageDetail} />
                                     );
+                                } else if (message.type === 'stamp') {
+                                    return (
+                                        <StampMessage
+                                            key={message.messageId}
+                                            me={message.fromUserName === this.props.userName}
+                                            name={message.fromUserName}
+                                            postDate={message.postDate}
+                                            imgdata={message.messageDetail} />
+                                    );
                                 } else {
                                     return (
                                         <div key={message.messageId}>未実装</div>
@@ -174,7 +181,7 @@ class Messages extends Component {
                                 }
                             })}
                         </div>
-                        <StampSelect />
+                        {/*<StampSelect />*/}
                         <div style={{height:73}}></div>
                     </main>
                 </div>
@@ -195,6 +202,9 @@ class Messages extends Component {
         );
     }
 };
+Messages.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
 
 
 
@@ -211,9 +221,6 @@ export const ConnectedMessages = connect(
         routerActions: bindActionCreators(Object.assign({}, routerActions), dispatch),
         onInit: () => {
             dispatch(messagesActions.getMessages());
-        },
-        onClick: () => {
-            //dispatch(execLogin(userId));
         },
     })
 )(withStyles(styles)(Messages));

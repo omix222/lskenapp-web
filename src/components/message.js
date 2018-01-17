@@ -1,7 +1,6 @@
 import React, { Component }   from "react";
 import { withStyles } from 'material-ui/styles';
 import PropTypes              from 'prop-types';
-import Paper from 'material-ui/Paper';
 import moment from 'moment';
 
 const styles = theme => ({
@@ -102,6 +101,7 @@ class TextMessage_ extends Component {
         const { me, classes, name, text, postDate } = this.props;
         let date = moment(postDate).format("MM/DD HH:mm");
         if (me) {
+            // 自分の場合
             return (
                 <div className={classes.myContainer}>
                     <div className={classes.myContent}>
@@ -109,13 +109,14 @@ class TextMessage_ extends Component {
                         {text}
                         </div>
                     </div>
-                    <span className={classes.myTimestamp}>{postDate}</span>
+                    <span className={classes.myTimestamp}>{date}</span>
                 </div>
             );
         } else {
+            // 他人の場合
             return (
                 <div className={classes.talkContainer}>
-                    <img className={classes.talkIcon} src="./img/def_user.png" />
+                    <img className={classes.talkIcon} src="./img/def_user.png" alt="" />
                     <div className={classes.talkContent}>
                         <div className={classes.talkUser}>
                             {name}
@@ -140,27 +141,28 @@ TextMessage_.propTypes = {
 class StampMessage_ extends Component {
 
     render() {
-        const { me, classes } = this.props;
+        const { me, classes, name, postDate, imgdata } = this.props;
+        let date = moment(postDate).format("MM/DD HH:mm");
         if (me) {
             return (
                 <div className={classes.myContainer}>
                     <div className={classes.myContent}>
-                        <img src="https://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20170423/20170423030055.png" />
+                        <img src={"data:image/png;base64," + imgdata} alt="" />
                     </div>
-                    <span className={classes.myTimestamp}>09:00</span>
+                    <span className={classes.myTimestamp}>{date}</span>
                 </div>
             );
         } else {
             return (
                 <div className={classes.talkContainer}>
-                    <img className={classes.talkIcon} src="./img/def_user.png" />
+                    <img className={classes.talkIcon} src="./img/def_user.png" alt="" />
                     <div className={classes.talkContent}>
                         <div className={classes.talkUser}>
-                        あああ
+                            {name}
                         </div>
-                        <img src="https://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20170423/20170423030055.png" />
+                        <img src={"data:image/png;base64," + imgdata} alt="" />
                     </div>
-                    <span className={classes.timestamp}>09:00</span>
+                    <span className={classes.timestamp}>{date}</span>
                 </div>
             );
         }

@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import { routerActions } from 'react-router-redux'
+//import { routerActions } from 'react-router-redux'
 import { baseURL } from '../config'
 
 /* ActionType Constants */
