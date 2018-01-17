@@ -23,6 +23,9 @@ import IconButton from 'material-ui/IconButton';
 import ChatIcon from 'material-ui-icons/Chat';
 import SendIcon from 'material-ui-icons/Send';
 import InsertEmoticonIcon from 'material-ui-icons/InsertEmoticon';
+import StampSelect from '../components/stamp_select';
+import { TextMessage, StampMessage } from '../components/message';
+import { messagesActions } from '../modules/messages'
 
 
 
@@ -63,7 +66,6 @@ const styles = theme => ({
     content: {
         backgroundColor: theme.palette.background.white,
         width: '100%',
-        padding: theme.spacing.unit * 3,
         minHeight: 'calc(100% - 56px)',
         overflowY: 'auto',
         marginTop: 56,
@@ -72,101 +74,8 @@ const styles = theme => ({
             marginTop: 64,
         },
     },
-    other:{
-        '&:before': {
-            content: '"たわし"'
-        },
-        '&:after': {
-            backgroundImage: "url(http://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20160910/20160910223959.png)"
-        }
-    },
-    talkContainer: {
-        display: 'flex',
-        margin: 20,
-    },
-    myContainer: {
-        display: 'flex',
-        flexDirection: 'row-reverse',
-        margin: 20,
-    },
-    talkContent: {
-        display: 'flex',
-        flexDirection: 'column'
-    },
-    myContent: {
-        display: 'flex',
-        flexDirection: 'column'
-    },
-    talkIcon: {
-        width:45,
-        height:45,
-        borderRadius:40
-    },
-    talkUser: {
-        color: theme.palette.grey[500],
-        fontSize: '.8em',
-    },
-    myTalk: {
-        display: 'inline-block',
-        fontSize: '.8em',
-        maxWidth: 280,
-        padding: '5px 10px',
-        borderRadius: 10,
-        // fontSize: '1.3rem',
-        // minHeight: 30,
-        wordWrap: 'break-word',
-        position: 'relative',
-        marginRight: 10,
-        backgroundColor: '#C2F5A8',
-        '&:before': {
-            zIndex: -1,
-            height:0,
-            content: '""',
-            display: 'block',
-            position: 'absolute',
-            top: 2,
-            border: '8px solid transparent',
-            right: -16,
-            transform: 'rotate(-20deg)',
-            borderLeft: '25px solid #C2F5A8',
-        }
-    },
-    timestamp: {
-        alignSelf: 'flex-end',
-        color: theme.palette.grey[500],
-        fontSize: '.4em',
-        padding: '0px 0px 4px 8px',
-    },
-    myTimestamp: {
-        alignSelf: 'flex-end',
-        color: theme.palette.grey[500],
-        fontSize: '.4em',
-        padding: '0px 8px 4px 0px',
-    },
-    otherTalk: {
-        display: 'inline-block',
-        fontSize: '.8em',
-        maxWidth: 280,
-        padding: '5px 10px',
-        borderRadius: 10,
-        // fontSize: '1.3rem',
-        // minHeight: 30,
-        wordWrap: 'break-word',
-        position: 'relative',
-        marginLeft: 10,
-        backgroundColor: '#ECEEF3',
-        '&:before': {
-            zIndex: -1,
-            height:0,
-            content: '""',
-            display: 'block',
-            position: 'absolute',
-            top: 2,
-            border: '8px solid transparent',
-            left: -16,
-            transform: 'rotate(20deg)',
-            borderRight: '25px solid #ECEEF3',
-        }
+    messageList: {
+        padding: theme.spacing.unit * 3,
     },
     inputPanel: {
         position: 'fixed',
@@ -196,88 +105,18 @@ const styles = theme => ({
         //margin: theme.spacing.unit * 0.2,
     },
 });
-const otherTalkStyles = props => ({
-    other: {
-        '&:after': {
-            backgroundImage: "url(http://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20160910/20160910223959.png)"
-        }
-    },
-});
 
-class TalkComponent extends Component {
-    render() {
-        const { me, classes } = this.props;
-        if (me) {
-            return (
-                <div className={classes.myContainer}>
-                    <div className={classes.myContent}>
-                        <div className={classes.myTalk}>
-                        あいうえおかきくけこさしすせそあああ
-                        </div>
-                    </div>
-                    <span className={classes.myTimestamp}>09:30</span>
-                </div>
-            );
-        } else {
-            return (
-                <div className={classes.talkContainer}>
-                    <img className={classes.talkIcon} src="./img/def_user.png" />
-                    <div className={classes.talkContent}>
-                        <div className={classes.talkUser}>
-                        あああ
-                        </div>
-                        <div className={classes.otherTalk}>
-                        あいうえおかきくけこさしすせそあああ
-                        </div>
-                    </div>
-                    <span className={classes.timestamp}>09:00</span>
-                </div>
-            );
-        }
-    }
-}
-const Talk = withStyles(styles)(TalkComponent);
-Talk.defaultProps = { me: false};
 
-class StampComponent extends Component {
 
-    render() {
-        const { me, classes } = this.props;
-        if (me) {
-            return (
-                <div className={classes.myContainer}>
-                    <div className={classes.myContent}>
-                        <img src="https://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20170423/20170423030055.png" />
-                    </div>
-                    <span className={classes.myTimestamp}>09:00</span>
-                </div>
-            );
-        } else {
-            return (
-                <div className={classes.talkContainer}>
-                    <img className={classes.talkIcon} src="./img/def_user.png" />
-                    <div className={classes.talkContent}>
-                        <div className={classes.talkUser}>
-                        あああ
-                        </div>
-                        <img src="https://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20170423/20170423030055.png" />
-                    </div>
-                    <span className={classes.timestamp}>09:00</span>
-                </div>
-            );
-        }
-    }
-}
-const Stamp = withStyles(styles)(StampComponent);
-Stamp.defaultProps = { me: false};
 
 
 
 class Messages extends Component {
     componentDidMount() {
+        this.props.onInit();
     }
     render() {
-        const { classes } = this.props;
+        const { classes, messages } = this.props;
         const anchor = "left"
         const drawer = (
             <Drawer
@@ -317,14 +156,26 @@ class Messages extends Component {
                     </AppBar>
                     {drawer}
                     <main className={classes.content}>
-                        <div>
-                            <Talk name="はしもと" text="おはよう" />
-                            <Talk me={true} name="はしもと" text="おはよう" />
-                            <Stamp name="はしもと" />
-                            <Talk name="はしもと" text="おはよう" />
-                            <Stamp me={true} />
-                            <Stamp me={true} />
+                        <div className={classes.messageList}>
+                            {messages.map((message) => {
+                                if (message.type === 'text') {
+                                    return (
+                                        <TextMessage
+                                            key={message.messageId}
+                                            me={message.fromUserName === this.props.userName}
+                                            name={message.fromUserName}
+                                            postDate={message.postDate}
+                                            text={message.messageDetail} />
+                                    );
+                                } else {
+                                    return (
+                                        <div key={message.messageId}>未実装</div>
+                                    );
+                                }
+                            })}
                         </div>
+                        <StampSelect />
+                        <div style={{height:73}}></div>
                     </main>
                 </div>
                 <div className={classes.inputPanel}>
@@ -352,10 +203,15 @@ class Messages extends Component {
 
 export const ConnectedMessages = connect(
     // mapStateToProps
-    state => state.auth,
+    state => {
+        return {...state.messages, ...state.auth.data}
+    },
     // mapDispatchToProps
     dispatch => ({
         routerActions: bindActionCreators(Object.assign({}, routerActions), dispatch),
+        onInit: () => {
+            dispatch(messagesActions.getMessages());
+        },
         onClick: () => {
             //dispatch(execLogin(userId));
         },

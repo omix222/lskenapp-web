@@ -7,7 +7,6 @@ import { connect }            from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { routerActions }      from 'react-router-redux'
 import PropTypes              from 'prop-types';
-import classNames             from 'classnames';
 import { withStyles }         from 'material-ui/styles';
 
 import Card, { CardHeader, CardActions, CardContent } from 'material-ui/Card';
@@ -15,8 +14,7 @@ import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
 
-
-import { loginRequest, execLogin } from '../modules/login'
+import { loginActions } from '../modules/login'
 
 const styles = theme => ({
     root: {
@@ -108,6 +106,10 @@ class LoginComponent extends Component {
         );
     }
 };
+LoginComponent.propTypes = {
+    classes: PropTypes.object.isRequired,
+    onClick: PropTypes.func.isRequired,
+};
 
 export const ConnectedLogin = connect(
     // mapStateToProps
@@ -117,7 +119,7 @@ export const ConnectedLogin = connect(
         routerActions: bindActionCreators(Object.assign({}, routerActions), dispatch),
         onClick: (userId) => {
             //dispatch(routerActions.push("/messages"));
-            dispatch(execLogin(userId));
+            dispatch(loginActions.login(userId));
         },
     })
 )(withStyles(styles)(LoginComponent));
