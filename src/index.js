@@ -1,4 +1,5 @@
 import React           from "react";
+import logger from 'redux-logger'
 import { render } from 'react-dom'
 import { compose, createStore, applyMiddleware } from "redux";
 import { Provider }    from "react-redux";
@@ -41,7 +42,7 @@ const storage = compose(
 )(adapter(window.localStorage));
 
 const enhancer = compose(
-    applyMiddleware(middleware, thunkMiddleware),
+    applyMiddleware(logger, middleware, thunkMiddleware),
     /* storage-key */
     persistState(storage, 'lskenapp-web'),
     /* for ReduxDevTool Chrome Extention */
