@@ -3,6 +3,7 @@
     Presentational component に具体的なデータやコールバック関数を与えるコンポーネント
 */
 import React, { Component }   from "react";
+import ReactDOM from 'react-dom';
 import { connect }            from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { routerActions }      from 'react-router-redux'
@@ -26,9 +27,7 @@ import { TextMessage, StampMessage } from '../components/message';
 import { messagesActions } from '../modules/messages'
 
 
-
-
-const drawerWidth = 200;
+const drawerWidth = 240;
 const styles = theme => ({
     root: {
         width: '100%',
@@ -105,14 +104,43 @@ const styles = theme => ({
 });
 
 
-
-
-
-
 class Messages extends Component {
+    state = {
+        messageDetail: '',
+        disableSendButton: true,
+    };
+
     componentDidMount() {
-        this.props.onInit();
+        this.props.doGetMessages();
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        console.info("componentDidUpdate", this.props);
+        if (prevProps.isFetchingMessages && !this.props.isFetchingMessages) {
+            /* メッセージの末尾にスクロール */
+            let content = ReactDOM.findDOMNode(this.refs.content);
+            content.scrollTop = content.scrollHeight + 200;
+        }
+    }
+
+    handleChange = name => event => {
+        let val = event.target.value;
+        let disableSendButton = true;
+
+        if (name === 'messageDetail' && val) {
+            disableSendButton = false;
+        }
+
+        this.setState({
+          [name]: event.target.value,
+          disableSendButton: disableSendButton,
+        });
+    };
+
+    handlePostMessage = () => event => {
+        this.props.onPostMessage(this.state.messageDetail);
+    };
+
     render() {
         const { classes, messages } = this.props;
         const anchor = "left"
@@ -130,7 +158,7 @@ class Messages extends Component {
                         <ListItemIcon>
                             <ChatIcon />
                         </ListItemIcon>
-                        <ListItemText primary="aaa" />
+                        <ListItemText primary="グループ名(仮)" />
                     </ListItem>
                 </List>
                 <Divider />
@@ -153,7 +181,7 @@ class Messages extends Component {
                         </Toolbar>
                     </AppBar>
                     {drawer}
-                    <main className={classes.content}>
+                    <main ref="content" className={classes.content}>
                         <div className={classes.messageList}>
                             {messages.map((message) => {
                                 if (message.type === 'text') {
@@ -188,12 +216,31 @@ class Messages extends Component {
                 <div className={classes.inputPanel}>
                     <Divider />
                     <div className={classes.inputPanelInner}>
-                        <textarea className={classes.input} placeholder="メッセージを入力してください。" row="2">
+                        <textarea
+                            className={classes.input}
+                            placeholder="メッセージを入力してください。"
+                            row="2"
+                            onChange={this.handleChange('messageDetail')}
+                            >
                         </textarea>
-                        <IconButton className={classes.button} aria-label="スタンプ">
+                        <IconButton
+                            className={classes.button}
+                            aria-label="スタンプ"
+                            >
                             <InsertEmoticonIcon />
                         </IconButton>
-                        <IconButton className={classes.button} aria-label="送信">
+                        <IconButton
+                            color="primary"
+                            disabled={this.state.disableSendButton}
+                            className={classes.button}
+                            aria-label="送信"
+                            /*
+                            onClick={() => {
+                                this.props.onPostMessage(this.state.messageDetail);
+                            }}
+                            */
+                            onClick={this.handlePostMessage()}
+                            >
                             <SendIcon />
                         </IconButton>
                     </div>
@@ -207,21 +254,33 @@ Messages.propTypes = {
 };
 
 
-
-
-
-
 export const ConnectedMessages = connect(
     // mapStateToProps
     state => {
         return {...state.messages, ...state.auth.data}
     },
     // mapDispatchToProps
-    dispatch => ({
-        routerActions: bindActionCreators(Object.assign({}, routerActions), dispatch),
-        onInit: () => {
-            dispatch(messagesActions.getMessages());
-        },
-    })
+    (dispatch) => ({ dispatch }),
+    // mergeProps
+    (stateProps, dispatchProps, ownProps)  => {
+        const dispatch = dispatchProps.dispatch;
+        return Object.assign({}, ownProps, stateProps, {
+            routerActions: bindActionCreators(Object.assign({}, routerActions), dispatch),
+
+            doGetMessages: (onAfterCallback) => {
+                dispatch(messagesActions.getMessages());
+            },
+            onPostMessage: (messageDetail) => {
+                dispatchProps.dispatch(messagesActions.postMessage({
+                    type: 'text',
+                    messageDetail,
+                    groupId: stateProps.groupId,
+                    fromUserId: stateProps.userId
+                }, function() {
+                    dispatch(messagesActions.getMessages());
+                }));
+            }
+        });
+    }
 )(withStyles(styles)(Messages));
 
