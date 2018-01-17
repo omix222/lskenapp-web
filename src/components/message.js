@@ -8,7 +8,7 @@ const styles = theme => ({
     },
     talkContainer: {
         display: 'flex',
-        margin: 20,
+        margin: '20px 0px',
     },
     myContainer: {
         display: 'flex',
@@ -24,8 +24,8 @@ const styles = theme => ({
         flexDirection: 'column'
     },
     talkIcon: {
-        width:45,
-        height:45,
+        width:36,
+        height:36,
         borderRadius:40
     },
     talkUser: {
