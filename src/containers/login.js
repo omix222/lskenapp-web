@@ -42,7 +42,7 @@ const styles = theme => ({
         width: 400,
     },
     cardActions: {
-        margin: '16px 0',
+        margin: 8,
         justifyContent: 'flex-end',
     },
     button: {
