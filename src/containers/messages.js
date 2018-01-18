@@ -2,134 +2,301 @@
     Container Components
     Presentational component に具体的なデータやコールバック関数を与えるコンポーネント
 */
-import React, { Component } from "react";
-import styled from 'styled-components';
-
-import { connect } from 'react-redux'
+import React, { Component }   from "react";
+import ReactDOM from 'react-dom';
+import { connect }            from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { routerActions } from 'react-router-redux'
+import { routerActions }      from 'react-router-redux'
+import PropTypes              from 'prop-types';
+import classNames             from 'classnames';
+import { withStyles }         from 'material-ui/styles';
 
-const Input = styled.textarea`
-    font-size: 1.25rem;
-    line-height: 1.5;
-    border-radius: .3rem;
-    display: block;
-    width: 100%;
-    color: #495057;
-    background-color: #fff;
-    background-image: none;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    border-radius: .25rem;
-    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-`;
-const OtherTalk = styled.p`
-    &:before { content: "${ props => props.name}"; }
-    &:after  { background-image: url(./img/def_user.png); }
-`;
+import Drawer from 'material-ui/Drawer';
+import AppBar from 'material-ui/AppBar';
+import Toolbar from 'material-ui/Toolbar';
+import Button from 'material-ui/Button';
+import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
+import Typography from 'material-ui/Typography';
+import Divider from 'material-ui/Divider';
+import IconButton from 'material-ui/IconButton';
+import ChatIcon from 'material-ui-icons/Chat';
+import SendIcon from 'material-ui-icons/Send';
+import InsertEmoticonIcon from 'material-ui-icons/InsertEmoticon';
+import StampSelect from '../components/stamp_select';
+import { TextMessage, MapMessage, StampMessage } from '../components/message';
+import { messagesActions } from '../modules/messages'
 
-class MessagesComponent extends Component {
+
+const drawerWidth = 240;
+const styles = theme => ({
+    root: {
+        width: '100%',
+        height: '100vh',
+        zIndex: 1,
+        overflow: 'hidden',
+    },
+    appFrame: {
+        position: 'relative',
+        display: 'flex',
+        width: '100%',
+        height: '100%',
+    },
+    flex: {
+        flex: 1,
+    },
+    appBar: {
+        position: 'absolute',
+        width: `calc(100% - ${drawerWidth}px)`,
+    },
+    'appBar-left': {
+        marginLeft: drawerWidth,
+    },
+    'appBar-right': {
+        marginRight: drawerWidth,
+    },
+    drawerPaper: {
+        position: 'relative',
+        height: '100%',
+        width: drawerWidth,
+    },
+    drawerHeader: theme.mixins.toolbar,
+    drawerHeaderInner : {
+        padding: 16
+    },
+    content: {
+        backgroundColor: theme.palette.background.white,
+        width: '100%',
+        minHeight: 'calc(100% - 56px)',
+        overflowY: 'auto',
+        marginTop: 56,
+        [theme.breakpoints.up('sm')]: {
+            height: 'calc(100% - 64px)',
+            marginTop: 64,
+        },
+    },
+    messageList: {
+        padding: theme.spacing.unit * 3,
+    },
+    inputPanel: {
+        position: 'fixed',
+        bottom: 0,
+        height: 64+1,
+        width: '100%',
+        zIndex: 2000,
+        backgroundColor: theme.palette.common.white,
+    },
+    inputPanelInner: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+    input: {
+        border: 0,
+        resize: 'none',
+        height: 59,
+        fontSize: '1em',
+        marginLeft: drawerWidth,
+        width: `calc(100% - ${drawerWidth + 120}px)`,
+        /*
+        position: 'absolute',
+        left: drawerWidth,
+        */
+    },
+    button: {
+        //margin: theme.spacing.unit * 0.2,
+    },
+});
+
+
+class Messages extends Component {
+    state = {
+        messageDetail: '',
+        disableSendButton: true,
+    };
+
     componentDidMount() {
-        //window.componentHandler.upgradeDom();
-        // window.componentHandler.upgradeAllRegistered();
+        this.props.doGetMessages();
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        console.info("componentDidUpdate", this.props);
+        if (prevProps.isFetchingMessages && !this.props.isFetchingMessages) {
+            /* メッセージの末尾にスクロール */
+            let content = ReactDOM.findDOMNode(this.refs.content);
+            content.scrollTop = content.scrollHeight + 200;
+            this.setState({
+                messageDetail: ''
+            });
+        }
+    }
+
+    handleChange = name => event => {
+        let val = event.target.value;
+        let disableSendButton = true;
+
+        if (name === 'messageDetail' && val) {
+            disableSendButton = false;
+        }
+
+        this.setState({
+          [name]: event.target.value,
+          disableSendButton: disableSendButton,
+        });
+    };
+
+    handlePostMessage = () => event => {
+        this.props.onPostMessage(this.state.messageDetail);
+    };
+
     render() {
+        const { classes, messages } = this.props;
+        const anchor = "left"
+        const drawer = (
+            <Drawer
+                type="permanent"
+                classes={{
+                    paper: classes.drawerPaper,
+                }}
+                anchor={anchor}>
+                <div className={classes.drawerHeader} >
+                    <div className={classes.drawerHeaderInner}>
+                    {this.props.userId} : {this.props.userName}
+                    </div>
+                </div>
+                <Divider />
+                <List>
+                    <ListItem button>
+                        <ListItemIcon>
+                            <ChatIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="グループ名(仮)" />
+                    </ListItem>
+                </List>
+            </Drawer>
+        );
         return (
-            <div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-                <header className="mdl-layout__header">
-                    <div className="mdl-layout__header-row">
-                        <span className="mdl-layout-title">メッセージ一覧</span>
-                        <div className="mdl-layout-spacer"></div>
-                        <nav className="mdl-navigation mdl-layout--large-screen-only">
-                        {/*
-                            <a className="mdl-navigation__link" href="">Link1</a>
-                        */}
-                        </nav>
-                    </div>
-                </header>
-
-
-                <main className="mdl-layout__content" style={{ background: '#ffffff' }}>
-                    <div className="mdl-grid">
-                        <div className="mdl-cell mdl-cell--2-col"></div>
-                        <div className="mdl-cell mdl-cell--8-col entry-content">
-                            <div style={{ padding: '0px 10px' }}>
-                                <OtherTalk className="other-line" name={'たろう'}>
-                                    <span className="other-toge">ああああああいいいいいううううう</span>
-                                </OtherTalk>
-                                <p className="my-line">
-                                    <span className="my-toge">いいいい</span>
-                                </p>
-                                <OtherTalk className="other-line" name="じろう">
-                                    <span className="other-toge">じろうの発言です。<br/>改行改行</span>
-                                </OtherTalk>
-                                <OtherTalk className="other-line stamp" name={'たろう'}>
-                                    <span>
-                                        <img src="https://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20170423/20170423030055.png" alt="f:id:tawashix:20170423030055p:plain"
-                                            title="f:id:tawashix:20170423030055p:plain" className="hatena-fotolife"  />
-                                    </span>
-                                </OtherTalk>
-
-                                <p className="my-line stamp">
-                                    <span>
-                                        <img src="https://cdn-ak.f.st-hatena.com/images/fotolife/t/tawashix/20170423/20170423030055.png" alt="f:id:tawashix:20170423030055p:plain"
-                                            title="f:id:tawashix:20170423030055p:plain" className="hatena-fotolife"  />
-                                    </span>
-                                </p>
-
-                                <p className="my-line">
-                                    <span className="my-toge">うううううううううううううう</span>
-                                </p>
-                            </div>
+            <div className={classes.root}>
+                <div className={classes.appFrame}>
+                    <AppBar className={classNames(classes.appBar, classes[`appBar-${anchor}`])}>
+                        <Toolbar>
+                            <Typography type="title" color="inherit" className={classes.flex}>
+                            メッセージ一覧
+                            </Typography>
+                            <Button color="contrast" component="a" href="/" >ログアウト</Button>
+                        </Toolbar>
+                    </AppBar>
+                    {drawer}
+                    <main ref="content" className={classes.content}>
+                        <div className={classes.messageList}>
+                            {messages.map((message) => {
+                                if (message.type === 'text') {
+                                    return (
+                                        <TextMessage
+                                            key={message.messageId}
+                                            me={message.fromUserName === this.props.userName}
+                                            name={message.fromUserName}
+                                            postDate={message.postDate}
+                                            text={message.messageDetail} />
+                                    );
+                                } else if (message.type === 'map') {
+                                    return (
+                                        <MapMessage
+                                            key={message.messageId}
+                                            me={message.fromUserName === this.props.userName}
+                                            name={message.fromUserName}
+                                            postDate={message.postDate}
+                                            latlng={message.messageDetail} />
+                                    );
+                                } else if (message.type === 'stamp') {
+                                    return (
+                                        <StampMessage
+                                            key={message.messageId}
+                                            me={message.fromUserName === this.props.userName}
+                                            name={message.fromUserName}
+                                            postDate={message.postDate}
+                                            imgdata={message.messageDetail} />
+                                    );
+                                } else {
+                                    /*
+                                    return (
+                                        <div key={message.messageId}>未実装</div>
+                                    );
+                                    */
+                                }
+                            })}
                         </div>
-                        <div className="mdl-cell mdl-cell--2-col"></div>
+                        {/*<StampSelect />*/}
+                        <div style={{height:73}}></div>
+                    </main>
+                </div>
+                <div className={classes.inputPanel}>
+                    <Divider />
+                    <div className={classes.inputPanelInner}>
+                        <textarea
+                            className={classes.input}
+                            placeholder="メッセージを入力してください。"
+                            row="2"
+                            onChange={this.handleChange('messageDetail')}
+                            value={this.state.messageDetail}
+                            >
+                        </textarea>
+                        <IconButton
+                            className={classes.button}
+                            aria-label="スタンプ"
+                            >
+                            <InsertEmoticonIcon />
+                        </IconButton>
+                        <IconButton
+                            color="primary"
+                            disabled={this.state.disableSendButton}
+                            className={classes.button}
+                            aria-label="送信"
+                            /*
+                            onClick={() => {
+                                this.props.onPostMessage(this.state.messageDetail);
+                            }}
+                            */
+                            onClick={this.handlePostMessage()}
+                            >
+                            <SendIcon />
+                        </IconButton>
                     </div>
-                </main>
-                <footer className="mdl-mini-footer" style={{ background: '#ECEEF3', padding: 0, height: '180px' }}>
-                    <div className="mdl-grid" style={{ width: '100%' }}>
-                        <div className="mdl-cell mdl-cell--12-col">
-                            <Input placeholder="メッセージを入力してください。" />
-                        </div>
-                        <div className="mdl-cell mdl-cell--12-col">
-                            <button className="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored">
-                                Send
-                            </button>
-                            <button className="mdl-button mdl-js-button mdl-button--icon" style={{ marginLeft: 10 }}>
-                                <i className="material-icons">mood</i>
-                            </button>
-                        </div>
-                    </div>
-                </footer>
+                </div>
             </div>
         );
     }
 };
+Messages.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
 
 
+export const ConnectedMessages = connect(
+    // mapStateToProps
+    state => {
+        return {...state.messages, ...state.auth.data}
+    },
+    // mapDispatchToProps
+    (dispatch) => ({ dispatch }),
+    // mergeProps
+    (stateProps, dispatchProps, ownProps)  => {
+        const dispatch = dispatchProps.dispatch;
+        return Object.assign({}, ownProps, stateProps, {
+            routerActions: bindActionCreators(Object.assign({}, routerActions), dispatch),
 
-
-
-
-// ReduxのStoreを第一引き数に取る関数で、ComponentにPropsとして渡すものをフィルタリングしたい時に使う
-const mapStateToProps = state => {
-    console.info("Messages#mapStateToProps");
-    return state.auth;
-}
-
-const mapDispatchToProps = dispatch => {
-    console.info("Messages#mapDispatchToProps");
-    return {
-        routerActions: bindActionCreators(Object.assign({}, routerActions), dispatch),
-        onClick: () => {
-            //console.info('onClick:login');
-            //dispatch(routerActions.push("/app"));
-            //dispatch(login('hoge'));
-        },
-    };
-}
-// NewComponent = connect(Componentからdispatchされたアクション) (Component)
-export const Messages = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(MessagesComponent);
+            doGetMessages: (onAfterCallback) => {
+                dispatch(messagesActions.getMessages());
+            },
+            onPostMessage: (messageDetail) => {
+                dispatchProps.dispatch(messagesActions.postMessage({
+                    type: 'text',
+                    messageDetail,
+                    groupId: stateProps.groupId,
+                    fromUserId: stateProps.userId
+                }, function() {
+                    dispatch(messagesActions.getMessages());
+                }));
+            }
+        });
+    }
+)(withStyles(styles)(Messages));
 
