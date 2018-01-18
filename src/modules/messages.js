@@ -23,7 +23,7 @@ export const messagesActions = {
 
 messagesActions.getMessages = () => (dispatch) => {
     dispatch(messagesActions.getMessagesRequest());
-    const url = `${baseURL}/v1.1/messages`;
+    const url = `${baseURL}/v1.1/messages/search`;
     return fetch(url, {
         method: 'GET',
         mode: 'cros',
