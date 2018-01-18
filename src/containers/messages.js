@@ -23,7 +23,7 @@ import ChatIcon from 'material-ui-icons/Chat';
 import SendIcon from 'material-ui-icons/Send';
 import InsertEmoticonIcon from 'material-ui-icons/InsertEmoticon';
 import StampSelect from '../components/stamp_select';
-import { TextMessage, StampMessage } from '../components/message';
+import { TextMessage, MapMessage, StampMessage } from '../components/message';
 import { messagesActions } from '../modules/messages'
 
 
@@ -60,6 +60,9 @@ const styles = theme => ({
         width: drawerWidth,
     },
     drawerHeader: theme.mixins.toolbar,
+    drawerHeaderInner : {
+        padding: 16
+    },
     content: {
         backgroundColor: theme.palette.background.white,
         width: '100%',
@@ -120,6 +123,9 @@ class Messages extends Component {
             /* メッセージの末尾にスクロール */
             let content = ReactDOM.findDOMNode(this.refs.content);
             content.scrollTop = content.scrollHeight + 200;
+            this.setState({
+                messageDetail: ''
+            });
         }
     }
 
@@ -151,7 +157,11 @@ class Messages extends Component {
                     paper: classes.drawerPaper,
                 }}
                 anchor={anchor}>
-                <div className={classes.drawerHeader} />
+                <div className={classes.drawerHeader} >
+                    <div className={classes.drawerHeaderInner}>
+                    {this.props.userId} : {this.props.userName}
+                    </div>
+                </div>
                 <Divider />
                 <List>
                     <ListItem button>
@@ -159,12 +169,6 @@ class Messages extends Component {
                             <ChatIcon />
                         </ListItemIcon>
                         <ListItemText primary="グループ名(仮)" />
-                    </ListItem>
-                </List>
-                <Divider />
-                <List>
-                    <ListItem button component="a" href="/">
-                        <ListItemText primary="ログアウト" />
                     </ListItem>
                 </List>
             </Drawer>
@@ -193,6 +197,15 @@ class Messages extends Component {
                                             postDate={message.postDate}
                                             text={message.messageDetail} />
                                     );
+                                } else if (message.type === 'map') {
+                                    return (
+                                        <MapMessage
+                                            key={message.messageId}
+                                            me={message.fromUserName === this.props.userName}
+                                            name={message.fromUserName}
+                                            postDate={message.postDate}
+                                            latlng={message.messageDetail} />
+                                    );
                                 } else if (message.type === 'stamp') {
                                     return (
                                         <StampMessage
@@ -203,9 +216,11 @@ class Messages extends Component {
                                             imgdata={message.messageDetail} />
                                     );
                                 } else {
+                                    /*
                                     return (
                                         <div key={message.messageId}>未実装</div>
                                     );
+                                    */
                                 }
                             })}
                         </div>
@@ -221,6 +236,7 @@ class Messages extends Component {
                             placeholder="メッセージを入力してください。"
                             row="2"
                             onChange={this.handleChange('messageDetail')}
+                            value={this.state.messageDetail}
                             >
                         </textarea>
                         <IconButton

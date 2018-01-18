@@ -138,6 +138,51 @@ TextMessage_.propTypes = {
     text: PropTypes.string,
 };
 
+class MapMessage_ extends Component {
+    render() {
+        const { me, classes, name, latlng, postDate } = this.props;
+        let date = moment(postDate).format("MM/DD HH:mm");
+        if (me) {
+            // 自分の場合
+            return (
+                <div className={classes.myContainer}>
+                    <div className={classes.myContent}>
+                        <div className={classes.myTalk}>
+                            <a target="_blank"
+                                href={"https://www.google.co.jp/maps?q=" + latlng}>いまここにいるよ</a>
+                        </div>
+                    </div>
+                    <span className={classes.myTimestamp}>{date}</span>
+                </div>
+            );
+        } else {
+            // 他人の場合
+            return (
+                <div className={classes.talkContainer}>
+                    <img className={classes.talkIcon} src="./img/def_user.png" alt="" />
+                    <div className={classes.talkContent}>
+                        <div className={classes.talkUser}>
+                            {name}
+                        </div>
+                        <div className={classes.otherTalk}>
+                            <a target="_blank"
+                                href={"https://www.google.co.jp/maps?q=" + latlng}>いまここにいるよ</a>
+                        </div>
+                    </div>
+                    <span className={classes.timestamp}>{date}</span>
+                </div>
+            );
+        }
+    }
+}
+MapMessage_.propTypes = {
+    classes: PropTypes.object.isRequired,
+    me: PropTypes.bool,
+    name: PropTypes.string,
+    latlng: PropTypes.string,
+};
+
+
 class StampMessage_ extends Component {
 
     render() {
@@ -172,8 +217,10 @@ class StampMessage_ extends Component {
 
 export const TextMessage  = withStyles(styles)(TextMessage_);
 export const StampMessage = withStyles(styles)(StampMessage_);
+export const MapMessage = withStyles(styles)(MapMessage_);
 
 TextMessage.defaultProps  = { me: false};
+MapMessage.defaultProps  = { me: false};
 StampMessage.defaultProps = { me: false};
 
 
