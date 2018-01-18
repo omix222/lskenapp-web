@@ -111,6 +111,7 @@ class Messages extends Component {
     state = {
         messageDetail: '',
         disableSendButton: true,
+        openStampSelect: false
     };
 
     componentDidMount() {
@@ -144,8 +145,18 @@ class Messages extends Component {
     };
 
     handlePostMessage = () => event => {
-        this.props.onPostMessage(this.state.messageDetail);
+        this.props.onPostMessage('text', this.state.messageDetail);
     };
+
+    handleOpenStampSelect = () => event => {
+        this.toggleStampSelect(!this.state.openStampSelect);
+    };
+
+    toggleStampSelect = (open) => {
+        this.setState({
+            openStampSelect: open
+        });
+    }
 
     render() {
         const { classes, messages } = this.props;
@@ -224,7 +235,16 @@ class Messages extends Component {
                                 }
                             })}
                         </div>
-                        {/*<StampSelect />*/}
+                        <StampSelect
+                            open={this.state.openStampSelect}
+                            onClose={() => { this.toggleStampSelect(false) }}
+                            onInit={() => {this.props.doGetStamps()}}
+                            stamps={this.props.stamps}
+                            onSelect={(filename) => {
+                                this.props.onPostMessage('stamp', filename);
+                                this.toggleStampSelect(false) 
+                            }}
+                            />
                         <div style={{height:73}}></div>
                     </main>
                 </div>
@@ -241,7 +261,9 @@ class Messages extends Component {
                         </textarea>
                         <IconButton
                             className={classes.button}
+                            color={ this.state.openStampSelect ? "primary" : 'default'}
                             aria-label="スタンプ"
+                            onClick={this.handleOpenStampSelect()}
                             >
                             <InsertEmoticonIcon />
                         </IconButton>
@@ -283,19 +305,22 @@ export const ConnectedMessages = connect(
         return Object.assign({}, ownProps, stateProps, {
             routerActions: bindActionCreators(Object.assign({}, routerActions), dispatch),
 
+            doGetStamps: () => {
+                dispatch(messagesActions.getStamps());
+            },
             doGetMessages: (onAfterCallback) => {
                 dispatch(messagesActions.getMessages());
             },
-            onPostMessage: (messageDetail) => {
+            onPostMessage: (type, messageDetail) => {
                 dispatchProps.dispatch(messagesActions.postMessage({
-                    type: 'text',
+                    type: type,
                     messageDetail,
                     groupId: stateProps.groupId,
                     fromUserId: stateProps.userId
                 }, function() {
                     dispatch(messagesActions.getMessages());
                 }));
-            }
+            },
         });
     }
 )(withStyles(styles)(Messages));

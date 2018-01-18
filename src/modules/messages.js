@@ -9,6 +9,9 @@ const GET_MESSAGES_SUCCESS = 'GET_MESSAGES_SUCCESS';
 const POST_MESSAGE_REQUEST = 'POST_MESSAGE_REQUEST';
 const POST_MESSAGE_FAILURE = 'POST_MESSAGE_FAILURE';
 const POST_MESSAGE_SUCCESS = 'POST_MESSAGE_SUCCESS';
+const GET_STAMPS_REQUEST = 'GET_STAMPS_REQUEST';
+const GET_STAMPS_FAILURE = 'GET_STAMPS_FAILURE';
+const GET_STAMPS_SUCCESS = 'GET_STAMPS_SUCCESS';
 
 /* Action Creator */
 export const messagesActions = {
@@ -18,6 +21,9 @@ export const messagesActions = {
     postMessageRequest : ()     => ({ type: POST_MESSAGE_REQUEST }),
     postMessageFailure : (msg)  => ({ type: POST_MESSAGE_FAILURE, errorMessage: msg }),
     postMessageSuccess : ()     => ({ type: POST_MESSAGE_SUCCESS }),
+    getStampsRequest : ()     => ({ type: GET_STAMPS_REQUEST }),
+    getStampsFailure : (msg)  => ({ type: GET_STAMPS_FAILURE, errorMessage: msg }),
+    getStampsSuccess : (json) => ({ type: GET_STAMPS_SUCCESS, data: json }),
 }
 
 
@@ -65,14 +71,37 @@ messagesActions.postMessage = (message, onAfterCallback) => (dispatch) => {
     });
 };
 
+messagesActions.getStamps = (message) => (dispatch) => {
+    dispatch(messagesActions.getStampsRequest());
+    const url = `${baseURL}/v1.0/stamps`
+    return fetch(url, {
+        method: 'GET',
+        mode: 'cros',
+        headers: {
+            Authorization : 'token',
+        }
+    })
+    .then(response => {
+        return response.json();
+    })
+    .then(json => {
+        dispatch(messagesActions.getStampsSuccess(json));
+    })
+    .catch(error => {
+        dispatch(messagesActions.getStampsFailure('スタンプの取得に失敗しました。'));
+    });
+};
+
 
 /* Reducers */
 const initialState = {
     isFetchingMessages: false,
     isFetchingPostMessage: false,
+    isFetchingStamps: false,
     didInvalidate:false,
     groupId: 'g001',
     messages: [],
+    stamps: [],
 };
 export const messagesReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -102,6 +131,20 @@ export const messagesReducer = (state = initialState, action) => {
         case POST_MESSAGE_SUCCESS:
             return Object.assign({}, state, {
                 isFetchingPostMessage: false
+            });
+        case GET_STAMPS_REQUEST:
+            return Object.assign({}, state, {
+                isFetchingStamps: true
+            });
+        case GET_STAMPS_FAILURE:
+            return Object.assign({}, state, {
+                isFetchingStamps: false,
+                errorMessage: action.errorMessage
+            });
+        case GET_STAMPS_SUCCESS:
+            return Object.assign({}, state, {
+                isFetchingStamps: false,
+                stamps: action.data
             });
         default:
             return state;
