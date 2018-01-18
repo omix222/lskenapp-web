@@ -9,8 +9,6 @@ import persistState, {mergePersistedState} from 'redux-localstorage';
 import adapter from 'redux-localstorage/lib/adapters/localStorage';
 import filter from 'redux-localstorage-filter';
 
-
-
 import thunkMiddleware from 'redux-thunk';
 import createHistory from 'history/createBrowserHistory'
 import { Route } from "react-router-dom"
@@ -56,7 +54,6 @@ const store = createStore(
     enhancer,
 );
 
-
 const theme = createMuiTheme({
     palette: {
         primary: cyan,
@@ -72,7 +69,7 @@ render (
         <MuiThemeProvider theme={theme}>
             <ConnectedRouter history={ history }>
                 <div>
-                    <Route exact path="/" component={ ConnectedLogin }    />
+                    <Route exact path="/"         component={ ConnectedLogin }    />
                     <Route exact path="/messages" component={ ConnectedMessages } />
                 </div>
             </ConnectedRouter>
