@@ -118,13 +118,13 @@ class Messages extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        console.info("componentDidUpdate", this.props);
         if (prevProps.isFetchingMessages && !this.props.isFetchingMessages) {
             /* メッセージの末尾にスクロール */
             let content = ReactDOM.findDOMNode(this.refs.content);
             content.scrollTop = content.scrollHeight + 200;
             this.setState({
-                messageDetail: ''
+                messageDetail: '',
+                disableSendButton: true
             });
         }
     }
