@@ -44,7 +44,7 @@ const enhancer = compose(
     /* storage-key */
     persistState(storage, 'lskenapp-web'),
     /* for ReduxDevTool Chrome Extention */
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
+    /*window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),*/
 );
 
 const initialState = {};
