@@ -1,0 +1,4 @@
+applications:
+- name: lskenapiweb
+  command: npm run
+  buildpack: https://github.com/cloudfoundry/nodejs-buildpack

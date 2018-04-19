@@ -22,8 +22,12 @@ import cyan from 'material-ui/colors/cyan';
 import pink from 'material-ui/colors/pink';
 import red from 'material-ui/colors/red';
 import merge from 'lodash.merge';
-
 /*
+	* for pcf
+*/
+var host = process.env.VCAP_APP_HOST || 'localhost';
+var port = process.env.VMC_APP_PORT || 3000;
+
 import registerServiceWorker from './registerServiceWorker';
 */
 const history = createHistory()
