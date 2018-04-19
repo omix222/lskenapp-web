@@ -1,0 +1,19 @@
+{
+  "name": "lskenapp-web",
+  "scripts": {
+    "postdeploy": "npm start",
+    "pr-predestroy": "npm stop"
+  },
+  "env": {
+  },
+  "formation": {
+  },
+  "addons": [
+
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}
